@@ -1,0 +1,1019 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Programación avanzada en R</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="  Creative Commons Attribution 4.0 International License" />
+    <link href="taller_tidyverse_files/tile-view-0.2.6/tile-view.css" rel="stylesheet" />
+    <script src="taller_tidyverse_files/tile-view-0.2.6/tile-view.js"></script>
+    <link href="taller_tidyverse_files/animate.css-3.7.2/animate.xaringan.css" rel="stylesheet" />
+    <link href="taller_tidyverse_files/tachyons-4.12.0/tachyons.min.css" rel="stylesheet" />
+    <script src="taller_tidyverse_files/freezeframe-5.0.2/freezeframe.min.js"></script>
+    <script src="taller_tidyverse_files/xaringanExtra-freezeframe-0.0.1/freezeframe-init.js"></script>
+    <script id="xaringanExtra-freezeframe-options" type="application/json">{"selector":"img[src$=\"gif\"]","trigger":"click","overlay":false,"responsive":true,"warnings":true}</script>
+    <script src="taller_tidyverse_files/clipboard-2.0.6/clipboard.min.js"></script>
+    <link href="taller_tidyverse_files/xaringanExtra-clipboard-0.2.6/xaringanExtra-clipboard.css" rel="stylesheet" />
+    <script src="taller_tidyverse_files/xaringanExtra-clipboard-0.2.6/xaringanExtra-clipboard.js"></script>
+    <script>window.xaringanExtraClipboard(null, {"button":"Copy Code","success":"Copied!","error":"Press Ctrl+C to Copy"})</script>
+    <script type="application/json" id="xaringanExtra-editable-docid">{"id":"x0b4b734debf4e06a1fbe8534c72c310","expires":1}</script>
+    <script src="taller_tidyverse_files/himalaya-1.1.0/himalaya.js"></script>
+    <script src="taller_tidyverse_files/js-cookie-3.0.0/js.cookie.js"></script>
+    <link href="taller_tidyverse_files/editable-0.2.6/editable.css" rel="stylesheet" />
+    <script src="taller_tidyverse_files/editable-0.2.6/editable.js"></script>
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Programación avanzada en R
+## Escuela de Invierno - Julio 2021 <br> Gabriela Mathieu
+### <a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/88x31.png" /></a><br /> <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>
+
+---
+
+
+
+
+
+
+
+
+
+
+
+
+# ¿Qué haremos hoy?
+
+- Data frame vs. tibbles
+
+- Conceptos tidy data
+
+- Paquete dplyr
+
+- Operador pipe `%&gt;%` 
+
+- Paquete [tidyr](https://github.com/rstudio/cheatsheets/blob/master/data-import.pdf)
+
+&lt;!-- - Paquete [stringr] --&gt;
+
+&lt;!-- - Paquete [lubridate] --&gt;
+
+---
+class: inverse, center, middle
+background-image: url("https://raw.githubusercontent.com/rstudio/hex-stickers/master/PNG/tidyverse.png")
+background-position: 95% 9%
+background-size: 55px
+# tidyverse 
+
+---
+class: inverse, center, middle
+# tidy data 
+
+---
+# Tidy data
+
+- cada fila es una observación
+- cada columna es una variable
+- cada celda es un único valor 
+
+&lt;img src="img/tidyverse/tidy_concept.png" width="853" /&gt;
+
+Fuente: R for Data Science (Hadley Wickham &amp; Garrett Grolemund)
+
+
+---
+# Ejemplos de datos no ordenados  
+
+Solo algunas cosas no agradables que pueden pasar:
+
+- Los nombres de las columnas son valores, no nombres de variables.
+- Se almacenan múltiples variables en una columna.
+- Las variables se almacenan tanto en filas como en columnas.
+- Se almacenan múltiples tipos de unidades de observación en la misma tabla.
+- Hay metada junto con los datos 
+
+.pull-left[
+&lt;img src="img/tidyverse/gapminder.png" width="160%" /&gt;
+]
+
+.pull-right[
+
+&lt;img src="img/tidyverse/ipc_ine.png" width="120%" /&gt;
+]
+
+
+---
+class: center
+background-image: url("img/olympics.png")
+# 
+
+---
+# Juegos olímpicos
+
+.left-column[
+&lt;br&gt;&lt;br&gt;&lt;br&gt;
+
+![](https://media.giphy.com/media/3m8okZU1BdKlDbiWV8/giphy.gif)
+]
+
+.right-column[
+- Trabajaremos con datos sobre los [Juegos Olímpicos](https://www.kaggle.com/heesoo37/120-years-of-olympic-history-athletes-and-results#athlete_events.csv) descargados de Kaggle pero con las algunas modificaciones.
+
+- Los datos refieren a los JJOO modernos desde Atenas 1896 a Río de Janeiro 2016. 
+
+- El archivo `"athlete_events.csv"` contiene 271.116 observaciones y 13 variables, cada fila corresponde a un/a atleta que ha participado en cierto evento olímpico.
+
+&lt;!-- . ID, number, gender, age, height, weight, Team, NOC, games, Year, season, city, sport, event and medal parameters are used in this dataset as variables. --&gt;
+
+- El archivo `"noc_regions.csv"` contiene el nombre del comité olímpico nacional y su código. NOC por sus siglas en inglés National Organizing Committee.
+
+]
+
+
+---
+# Datos
+
+&lt;!-- https://github.com/mmertdogann/Olympics-EDA --&gt;
+&lt;!-- https://www.kaggle.com/heesoo37/120-years-of-olympic-history-athletes-and-results?select=noc_regions.csv --&gt;
+.pull-left[
+| Variable | Descripción |
+|----------|--------------|
+| ID  | identificador de la persona|
+| Name | nombre |
+| Sex | M / F |
+|  Age| edad |
+| Height | altura (cm) |
+| Weight | peso (kg) |
+
+]
+
+.pull-right[
+| Variable | Descripción |
+|----------|--------------|
+| Team |  nombre del equipo|
+| NOC | Comité Organizador Nacional |
+| Games | Año y juegos |
+| City | Ciudad anfitriona |
+| Sport | deporte en el que compitió |
+| Event | evento en el que compitió |
+| Gold| Medalla de oro|
+| Silver| Medalla de plata|
+| Bronze| Medalla de bronce|
+
+]
+
+
+---
+# Variables
+
+
+
+
+```r
+library(readr)
+
+atletas &lt;- read_csv("data/athlete_events.csv")
+naciones &lt;- read_csv("data/noc_regions.csv")
+```
+
+
+```r
+class(atletas)
+```
+
+```
+[1] "spec_tbl_df" "tbl_df"      "tbl"         "data.frame" 
+```
+
+```r
+head(atletas)
+```
+
+```
+# A tibble: 6 x 15
+     ID Name           Sex     Age Height Weight Team      NOC   Games    City   Sport    Event              Gold Silver Bronze
+  &lt;dbl&gt; &lt;chr&gt;          &lt;chr&gt; &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt; &lt;chr&gt;     &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt;  &lt;chr&gt;    &lt;chr&gt;             &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;
+1     1 A Dijiang      M        24    180     80 China     CHN   1992 Su… Barce… Basketb… Basketball Men's…     0      0      0
+2     2 A Lamusi       M        23    170     60 China     CHN   2012 Su… London Judo     Judo Men's Extra…     0      0      0
+3     3 Gunnar Nielse… M        24     NA     NA Denmark   DEN   1920 Su… Antwe… Football Football Men's F…     0      0      0
+4     4 Edgar Lindena… M        34     NA     NA Denmark/… DEN   1900 Su… Paris  Tug-Of-… Tug-Of-War Men's…     1      0      0
+5     5 Christine Jac… F        21    185     82 Netherla… NED   1988 Wi… Calga… Speed S… Speed Skating Wo…     0      0      0
+6     5 Christine Jac… F        21    185     82 Netherla… NED   1988 Wi… Calga… Speed S… Speed Skating Wo…     0      0      0
+```
+
+El objeto atleta tiene [varias clases asociadas](https://www.tidyverse.org/blog/2018/12/readr-1-3-1/): data.frame y tbl_df
+
+---
+# Data frame vs. Tibbles
+
+- En el ecosistema de tidyverse se trabaja básicamente con data frames  pero concretamente con una subclase llamada [tibble (tbl_df)](https://tibble.tidyverse.org/reference/tbl_df-class.html).
+
+- La mayoría de las veces usaré el término tibble y data frame de manera indistinta pero hay algunas diferencias:
+ 
+  - read_csv() importa los datos como tibble entonces &lt;span style=" font-weight: bold;    border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #b3e2cd !important;" &gt;no convierte caracteres en factores&lt;/span&gt;, &lt;span style=" font-weight: bold;    border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #b3e2cd !important;" &gt;no cambia el nombre de las variables&lt;/span&gt; y no asigna nombres a las filas. Puede usar nombres de columnas que no son nombres de variables válidos en R. Por ejemplo, pueden empezar con un caracter diferente a una letra o contener caracteres poco comunes, como espacios. 
+  
+  - &lt;span style=" font-weight: bold;    border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #b3e2cd !important;" &gt;la impresión en la consola&lt;/span&gt; de un tibble solo se muestran las primeras 10 filas y solo aquellas columnas que entran en el ancho de la pantalla. Agrega información de la clase de cada variable.
+  
+  &lt;!-- - la selección de los subconjuntos. Para usar estas herramientas dentro de un pipe, necesitarás usar el marcador de posición . `df %&gt;% .$x` --&gt;
+  
+  - Dentro del ecosistema tidyverse, una tibble nunca se convierte en otra clase de objeto. Un data frame sí puede.
+
+---
+# here::here()
+
+- Prescindir de la barra para definir rutas 
+
+- El paquete here permite crear rutas relativas robustas cuyo origen es nuestro proyecto
+
+- La función &lt;span style=" font-weight: bold;    border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #b3e2cd !important;" &gt;here()&lt;/span&gt; devuelve la ruta del directorio de trabajo. Si trabajamos en proyecto es donde está el RProj. 
+
+- Si el RProj está en la carpeta folder, y allí en la subcarpeta subfolder está el archivo a importar escribimos lo siguiente:
+
+
+```r
+data &lt;- read_csv(here("folder", "subfolder", "datafile.csv"))
+```
+
+
+
+- En el ejemplo:
+
+
+```r
+library(here)
+
+atletas &lt;- read_csv(here("data", "athlete_events.csv")) 
+naciones &lt;- read_csv(here("data", "noc_regions.csv")) 
+```
+
+- Similares prestaciones tiene la función &lt;span style=" font-weight: bold;    border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #b3e2cd !important;" &gt;file.path()&lt;/span&gt; de R base.
+
+&lt;!-- --- --&gt;
+&lt;!-- # ¿Por qué usar here? --&gt;
+
+&lt;!--  ¿Por qué usarlo si trabajando en proyecto ya resuelvo el lío de rutas? --&gt;
+&lt;!--  ¿Por qué usarlo si hace casi lo mismo que file.path()? --&gt;
+
+&lt;!-- - Le da robustez a tu código independientemente de cómo otras personas abran tu script y lo corran. Por ejemplo, si no usan el Rproj para abrirlo las rutas con here siguen funcionando. --&gt;
+---
+class: inverse, center, middle
+background-image: url("https://raw.githubusercontent.com/rstudio/hex-stickers/master/PNG/dplyr.png")
+background-position: 95% 9%
+background-size: 55px
+# dplyr
+
+---
+# dplyr
+
+- El paquete dplyr permite representar la información de un &lt;span style=" font-weight: bold;    border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #b3e2cd !important;" &gt;data frame&lt;/span&gt; en forma de &lt;span style=" font-weight: bold;    border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #b3e2cd !important;" &gt;tabla&lt;/span&gt;, donde cada fila representa una observación y cada columna represente una variable.
+&lt;br&gt;&lt;br&gt;
+--
+
+- dplyr no provee ninguna funcionalidad que no pueda ser realizada con las funciones del paquete base, sin embargo, es más simple y rápido (está escrito en C++).
+&lt;br&gt;&lt;br&gt;
+--
+
+- Todas las funciones del paquete tiene la particularidad de que su  &lt;span style=" font-weight: bold;    border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #b3e2cd !important;" &gt;primer argumento es un data frame&lt;/span&gt; al que le realizará la operación, mientras que los subsiguiente argumentos describen como realizar tal operación. 
+
+- Finalmente el &lt;span style=" font-weight: bold;    border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #b3e2cd !important;" &gt;resultado&lt;/span&gt; de todas estas funciones es un nuevo &lt;span style=" font-weight: bold;    border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #b3e2cd !important;" &gt;data frame&lt;/span&gt;. Esto no ocurre con las funciones de base. 
+
+
+---
+class: center, middle
+# ~~Base R vs. Tidyverse~~
+
+![](img/tidyverse/base_tidy.png)
+
+---
+# Principales funciones de dplyr
+
+| Función | Descripción | Uso |
+|---------|-------|--------------|
+| select() | seleccionar columnas | select(atletas, ID) | 
+| filter() | seleccionar filas por cierta condición | filter(atletas, sex == "F") |
+| mutate() | crear nuevas variables | mutate(atletas, mts = height/100)|
+| summarise() | resumir variables | summarise(atletas, mean(age))|
+| group_by() | agrupar observaciones | group_by(atletas, team) |
+| ungroup() | desagrupar un data frame agrupado |ungroup()|
+
+
+
+---
+class: inverse, center, middle
+background-image: url("http://hexb.in/vector/magrittr.svg")
+background-position: 95% 9%
+background-size: 55px
+# pipe
+
+---
+# Encadenamiento de funciones en lugar de anidación
+
+El operador &lt;span style=" font-weight: bold;    border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #b3e2cd !important;" &gt;%&amp;gt;%&lt;/span&gt;, llamado &lt;span style=" font-weight: bold;    border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #b3e2cd !important;" &gt;pipe&lt;/span&gt; (significa tubería) permitirá &lt;span style=" font-weight: bold;    border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #b3e2cd !important;" &gt;encadenar funciones&lt;/span&gt; en lugar de colocar una dentro de otra sin una a continuación de la otra.
+&lt;br&gt;&lt;br&gt;
+--
+
+- El pipe estructura una secuencia de operaciones sobre los datos de &lt;span style=" font-weight: bold;    border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #b3e2cd !important;" &gt;izquierda a derecha&lt;/span&gt;.
+&lt;br&gt;&lt;br&gt;
+--
+
+- A diferencia de la anidación de funciones que implica operaciones de adentro para afuera. 
+&lt;br&gt;&lt;br&gt;
+--
+
+- En lugar de f(x): &lt;span style=" font-weight: bold;    border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #b3e2cd !important;" &gt;x %&amp;gt;% f()&lt;/span&gt;
+&lt;br&gt;&lt;br&gt;
+--
+
+---
+# Pipe: atajo de teclado en Linux/Windows
+
+![](img/tidyverse/linux_pipe.png)
+
+---
+# Pipe: atajo de teclado en Mac
+
+![](img/tidyverse/mac_pipe.png)
+
+---
+# Armar un mate con y sin 'pipe'
+
+El &lt;span style=" font-weight: bold;    border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #b3e2cd !important;" &gt;mate&lt;/span&gt; es el &lt;span style=" font-weight: bold;    border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #b3e2cd !important;" &gt;data frame&lt;/span&gt;, los &lt;span style=" font-weight: bold;    border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #b3e2cd !important;" &gt;verbos&lt;/span&gt; de dplyr (así se llaman a las funciones que vimos) son las acciones que necesitamos para armarlo: poner la yerba, poner un poco de agua, dejarlo hinchar, poner la bombilla, cebar.
+--
+
+
+```r
+# Mate con 'pipe'
+
+mate %&gt;% 
+        poner_yerba() %&gt;%
+        hinchar() %&gt;%
+        colocar_bombilla() %&gt;%
+        cebar()
+```
+
+--
+
+En R base y sin el pipe tendríamos que concatenar estas funciones. Cuando las funciones están concatenadas el orden en que se ejecutan se obtiene de adentro hacia afuera.
+
+
+```r
+# Mate sin 'pipe'
+
+cebar(colocar_bombilla(hinchar(poner_yerba(mate))))
+```
+
+&lt;!-- [magrittr](https://github.com/tidyverse/magrittr/blob/master/vignettes/magrittr.Rmd) --&gt;
+
+---
+# Ejemplo: estandarizar nombres
+
+- Es frecuente que usemos datos que no tienen nombres adecuados o no siguen el código de estilo que utilizamos.
+
+- La función clean_names() del paquete janitor estandariza los nombres llevándolos a minúscula e incluyendo el guión bajo como separador de términos.
+
+- Alternativamente se puede usar la función tolower() de R base que solamente convierte los nombres a minúscula.
+
+---
+# Ejemplo
+
+Estandarizamos los nombres de las variables de los objetos atletas y naciones usando el pipe y la función del paquete janitor::clean_names()
+
+
+
+
+```r
+library(janitor)
+
+atletas &lt;- atletas %&gt;% clean_names()
+naciones &lt;- naciones %&gt;% clean_names()
+```
+
+---
+# Ejercicio
+
+- Instalar y cargar los paquetes necesarios
+
+- Cargar los datos de atletas
+
+- Estandarizar los nombres
+
+- Seleccionar todas las variables menos NOC
+
+- Seleccionar los casos de Chile, Colombia, Cuba, México, Perú y Uruguay
+
+---
+# dplyr
+
+| Función | Descripción | Uso |
+|---------|-------|--------------|
+| count() | devuelve frecuencias de una variable  | count(atleta, sex) |
+|arrange() | ordena el data frame según variables | arrange(atleta, )| 
+|rename() | renombra variables | rename(atleta, )|
+|case_when()| calcular una nueva variable a partir de otra| *|
+|slice()| selecciona filas por posición | slice(atleta, 1:5) |
+
+
+```r
+# *
+atletas &lt;- atletas %&gt;%
+  mutate(
+    menor = case_when(
+      age &lt; 18 ~ 1,
+      TRUE ~  0
+      )
+  )
+```
+
+---
+# Ejercicio
+
+Continuación del ejercicio anterior.
+
+- Crear la variable medal_1 y medal_2 que vale "Gold", "Silver", "Bronze" de dos formas:
+    - usando ifelse() 
+    - usando case_when()
+
+- Verificar resultados
+
+- Hacer un resumen de cantidad de medallas por país.
+
+- Seleccionar los casos de atletas cuya altura esté entre 1,95 y 2,05 mts. Probar también https://dplyr.tidyverse.org/reference/between.html
+
+- Seleccionar los casos de atletas cuya altura esté alrededor de 2 mts. Probar también https://dplyr.tidyverse.org/reference/near.html
+
+---
+class: inverse, middle, center
+# dplyr::*_join()
+
+---
+# join_*()
+
+- Las funciones &lt;span style=" font-weight: bold;    border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #b3e2cd !important;" &gt;*_join()&lt;/span&gt; de `dplyr` permiten &lt;span style=" font-weight: bold;    border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #b3e2cd !important;" &gt;unir dos data frame&lt;/span&gt;. Para ejemplificar llamaremos al primero `x`, al segundo `y`.
+&lt;br&gt;&lt;br&gt;
+--
+
+- Existen &lt;span style=" font-weight: bold;    border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #b3e2cd !important;" &gt;6 tipos de joins diferentes&lt;/span&gt;: left, right, full, inner se llaman "mutating joins", mientras que semi y anti se llaman "filtering joins".
+&lt;br&gt;&lt;br&gt;
+--
+
+- Para poder unir `x` e `y`, estos data frame deben tener una &lt;span style=" font-weight: bold;    border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #b3e2cd !important;" &gt;variable identificatoria (o clave)&lt;/span&gt; de los casos, la 'key' variable, que no necesariamente debe llamarse igual en cada base. Puede existir más de una key variable.
+&lt;br&gt;&lt;br&gt;
+--
+
+- La estructura de las funciones: &lt;span style=" font-weight: bold;    color: deeppink !important;" &gt;*_join()&lt;/span&gt;(&lt;span style=" font-weight: bold;    border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #b3e2cd !important;" &gt;&amp;lt;x&amp;gt;&lt;/span&gt;, &lt;span style=" font-weight: bold;    border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #b3e2cd !important;" &gt;&amp;lt;y&amp;gt;&lt;/span&gt;, by = &lt;span style=" font-weight: bold;    border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #b3e2cd !important;" &gt;&amp;lt;'key'&amp;gt;&lt;/span&gt;)
+&lt;br&gt;&lt;br&gt;
+--
+
+- Una simplificación de cómo operan cada una de estas funciones podemos verla mediante gifs creados en este tutorial de [tidyexplain](https://www.garrickadenbuie.com/project/tidyexplain/).
+
+
+
+---
+# dplyr::left_join()
+
+.pull-left[
+
+- &lt;span style=" font-weight: bold;    border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #b3e2cd !important;" &gt;Mantiene todos los casos y variables de x.&lt;/span&gt; 
+
+- &lt;span style=" font-weight: bold;    border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #b3e2cd !important;" &gt;Agrega las variables de y&lt;/span&gt;, para los casos de x que no están en y, esas nuevas variables tendrán un dato faltante.
+
+- Si una fila de x matchea con múltiples filas de y, la fila de x se repetirá tantas veces como filas de y. 
+
+]
+
+.pull-right[
+![](img/left-join.gif)
+]
+
+
+
+---
+# dplyr::right_join()
+
+.pull-left[
+
+- Se queda con todos los casos y las variables de `y`.
+
+- El `right_join(x, y)` es lo mismo que el `left_join(y, x)`
+]
+.pull-right[
+
+![](img/right-join.gif)
+]
+---
+# dplyr::full_join()
+
+.pull-left[
+- Se queda con todos los casos de `x` y todos los casos `y`.
+
+- Se queda con todos las variables de `x` y todas las de `y`.
+]
+
+.pull-right[
+![](img/full-join.gif)
+]
+
+---
+# dplyr::inner_join()
+
+.pull-left[
+- Se queda solo con los casos comunes entre `x` e `y`.
+
+
+- Se queda con las variables de ambas bases.
+]
+.pull-right[
+![](img/inner-join.gif)
+]
+
+---
+# dplyr::semi_join()
+.pull-left[
+- Se queda solo con los casos comunes entre `x` e `y`.
+
+- Se queda solo con las variables de `x`.
+
+]
+.pull-right[
+![](img/semi-join.gif)
+]
+
+
+---
+# dplyr::anti_join()
+
+.pull-left[
+- Se queda con los casos de `x` que no están en `y`.
+
+]
+.pull-right[
+![](img/anti-join.gif)
+]
+
+
+
+---
+# Unir dos data frame
+
+
+```r
+library(dplyr)
+# cual es la variable clave
+atletas %&gt;% select(1:9) %&gt;% slice(1:2)
+```
+
+```
+# A tibble: 2 x 9
+     id name      sex     age height weight team  noc   games      
+  &lt;dbl&gt; &lt;chr&gt;     &lt;chr&gt; &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;      
+1     1 A Dijiang M        24    180     80 China CHN   1992 Summer
+2     2 A Lamusi  M        23    170     60 China CHN   2012 Summer
+```
+
+```r
+naciones %&gt;% slice(1:2)
+```
+
+```
+# A tibble: 2 x 3
+  noc   region      notes               
+  &lt;chr&gt; &lt;chr&gt;       &lt;chr&gt;               
+1 AFG   Afghanistan &lt;NA&gt;                
+2 AHO   Curacao     Netherlands Antilles
+```
+
+
+---
+# left_join()
+
+
+```r
+# uno ambos df
+juegos &lt;- left_join(atletas, naciones, by = "noc")
+```
+
+---
+# Guardar un objeto a un archivo propio de R
+
+- &lt;span style=" font-weight: bold;    border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #b3e2cd !important;" &gt;RDS&lt;/span&gt; y &lt;span style=" font-weight: bold;    border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #b3e2cd !important;" &gt;RData&lt;/span&gt; son formatos propios de R.
+&lt;br&gt;&lt;br&gt;
+--
+
+- Sirve para &lt;span style=" font-weight: bold;    border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #b3e2cd !important;" &gt;guardar objetos de R&lt;/span&gt;. Los archivos ocupan mucho menos espacio que otros formatos.
+&lt;br&gt;&lt;br&gt;
+--
+
+- El formato RDS permite guardar un objeto mientras que RData permite guardar más de un objeto.
+
+
+```r
+# guardar un objeto en formato rds
+
+saveRDS(atletas, file = "atletas.RDS") 
+
+# guardar un objeto (data frame) en formato RData
+save(atletas, file = "atletas.RData")
+```
+--
+
+- En la función &lt;span style=" font-weight: bold;    border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #b3e2cd !important;" &gt;save()&lt;/span&gt; debo especificar el argumento `file` de lo contrario me dará error. Ya que es posible guardar más de un objeto en el mismo archivo Rdata. 
+
+
+---
+# Leer un archivo Rdata
+
+- Utilizo la función &lt;span style=" font-weight: bold;    border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #b3e2cd !important;" &gt;load()&lt;/span&gt;
+
+- No lo asigno a ningún objeto a diferencia del resto de las funciones de importación/lectura.
+
+
+```r
+# cargar un archivo en formato Rdata
+# observar que es el único caso en que no debo asignar a un objeto
+load("atletas.RData")
+```
+
+- El nombre del o los objetos ya está asignado, me doy cuenta qué objeto cargó mirando el enviroment.  
+
+- Un truco es escribir la orden entre paréntesis curvos y se despliega el nombre del objeto en la consola. 
+
+
+```r
+(load("atletas.RData"))
+```
+
+---
+# Leer un archivo RDS
+
+- Utilizo la función &lt;span style=" font-weight: bold;    border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #b3e2cd !important;" &gt;readRDS()&lt;/span&gt;
+
+- En este caso puedo prescindir de nombrar el argumento `file`.
+
+- Debo asignar a un objeto, no viene esa información y no tengo que llamarle igual que antes.
+
+
+```r
+athletes &lt;- readRDS("atletas.RDS")
+```
+
+
+---
+class: inverse, center, middle
+background-image: url("https://raw.githubusercontent.com/rstudio/hex-stickers/master/PNG/tidyr.png")
+background-position: 95% 9%
+background-size: 55px
+# tidyr
+
+---
+# separate()
+
+- Los datos están "limpios" pero la variable 'games' podría descomponerse en dos, una de año y otra de temporada. 
+- Esto se puede hacer fácilmente con la función separate() creando una nueva variable year y otra season. 
+- La variable original Games se elimina automáticamente 
+
+
+```r
+library(tidyr)
+juegos &lt;- juegos %&gt;% separate(games, into = c("year", "seasons"), sep = " ")
+head(juegos)
+```
+
+```
+# A tibble: 6 x 19
+     id name    sex     age height weight team   noc   year  seasons city   sport event   gold silver bronze menor region notes
+  &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt; &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt; &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;   &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;  &lt;chr&gt;
+1     1 A Diji… M        24    180     80 China  CHN   1992  Summer  Barce… Bask… Baske…     0      0      0     0 China  &lt;NA&gt; 
+2     2 A Lamu… M        23    170     60 China  CHN   2012  Summer  London Judo  Judo …     0      0      0     0 China  &lt;NA&gt; 
+3     3 Gunnar… M        24     NA     NA Denma… DEN   1920  Summer  Antwe… Foot… Footb…     0      0      0     0 Denma… &lt;NA&gt; 
+4     4 Edgar … M        34     NA     NA Denma… DEN   1900  Summer  Paris  Tug-… Tug-O…     1      0      0     0 Denma… &lt;NA&gt; 
+5     5 Christ… F        21    185     82 Nethe… NED   1988  Winter  Calga… Spee… Speed…     0      0      0     0 Nethe… &lt;NA&gt; 
+6     5 Christ… F        21    185     82 Nethe… NED   1988  Winter  Calga… Spee… Speed…     0      0      0     0 Nethe… &lt;NA&gt; 
+```
+
+&lt;!-- --- --&gt;
+&lt;!-- # Ejercicio --&gt;
+
+&lt;!-- 1- Utiliza la función unite() para combinar las variables gold, silver y bronze en una variable llamada medal --&gt;
+
+&lt;!-- 2- Crea una nueva variable llamada medal_type que valga "Gold", "Silver", "Bronze" según corresponda. --&gt;
+
+---
+class: inverse, center, middle
+# tidyr::pivot_longer()
+
+---
+# Ejemplo: datos no "tidy"
+
+- Es frecuente utilizar datos que no tienen una estructura "tidy". 
+- El archivo "uy_wide.csv" contiene los registros de deportistas de Uruguay que han participado en JJOO.
+
+
+```
+# A tibble: 361 x 23
+   Name  `1924` `1928` `1932` `1936` `1948` `1952` `1956` `1960` `1964` `1968` `1972` `1976` `1984` `1988` `1992` `1996` `1998`
+   &lt;chr&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;
+ 1 Jos …      1     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA
+ 2 Pedr…      1     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA
+ 3 Hcto…      1     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA
+ 4 Jos …      1     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA
+ 5 Libe…      1     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA
+ 6 Manu…      1     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA
+ 7 L. A…      1     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA
+ 8 Sant…      1     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA
+ 9 Alfr…      1     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA
+10 Mari…      1     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA
+# … with 351 more rows, and 5 more variables: 2000 &lt;dbl&gt;, 2004 &lt;dbl&gt;, 2008 &lt;dbl&gt;, 2012 &lt;dbl&gt;, 2016 &lt;dbl&gt;
+```
+
+
+```r
+uy_wide &lt;- readr::read_csv("data/uy_wide.csv")
+slice(uy_wide)
+```
+
+---
+# Ejemplo
+
+- En el data frame uy_wide, tenemos una columna por nombre del/la atleta y varias columnas para cada año de los JJOO. 
+
+- En la lógica tidy-data estas columnas no son exactamente variables sino observaciones de la variable año.
+
+- Debemos pasar de este formato *wide* (más columnas) a un formato *long* (menos columnas, más filas)
+
+- Este procedimiento también se conoce como reshape.
+
+- Para eso usamos la función pivot_longer() del paquete tidyr.
+
+&lt;!-- https://jhudatascience.org/tidyversecourse/wrangle-data.html#reshaping-the-data --&gt;
+
+---
+# Ejemplo
+
+
+```r
+library(tidyr)
+uy_long &lt;- uy_wide %&gt;%
+  pivot_longer(cols = `1924`:`2016`,
+               names_to = "year",
+               values_to = "play")
+```
+
+El acento grave se usa con los nombres de las variables que tienen más de un término o comienzan en números (nombres no sintácticos).
+
+---
+# Ejemplo
+
+Para que no deje los casos con NA y por ende solo dejar el registro de quienes participaron. 
+
+
+```r
+uy_long &lt;- uy_wide %&gt;%
+  pivot_longer(cols = `1924`:`2016`,
+               names_to = "year",
+               values_to = "play",
+*              values_drop_na = TRUE)
+```
+
+---
+class: inverse, center, middle
+background-image: url("https://raw.githubusercontent.com/rstudio/hex-stickers/master/PNG/stringr.png")
+background-position: 95% 9%
+background-size: 55px
+# stringr
+
+---
+# Texto
+
+- En R, un texto se representa como una secuencia de caracteres (letras, números y símbolos). 
+
+- Los objetos de texto son de clase character. 
+
+- R trae un conjunto de funciones para manipular texto
+
+|Función | Descripción |
+|----------|------------|
+| nchar()	| cantidad de caracteres |
+| tolower()| convertir a minúsculas|
+| toupper()|convertir a mayúsculas|
+| casefold()| minúscula/mayúscula|
+|substr()|	subjconjunto de caracteres| 
+
+---
+# Operaciones de conjuntos
+
+R tiene una serie de funciones para operar sobre dos vectores que son aplicables a vectores de clase character.
+
+| Función | Descripción |
+|---------|-------------|
+| union()	| unión|
+|intersect()| intersección |
+| setdiff()| diferencia|
+|setequal()| igual|
+| identical()| idéntico (elemento a elemento)|
+|is.element()| está en |
+
+---
+# Paquete stringr
+
+El paquete [stringr](https://github.com/rstudio/cheatsheets/blob/master/strings.pdf) trae una serie de funciones para manipular texto de forma consistente en R.
+
+- manipulaciones básicas 
+
+|Function|	Descripción | Similar a|
+|----------|-----------|-----------|
+|str_c()|	concatenación |paste()|
+|str_length()| cantidad de caracteres|	nchar()|
+|str_sub()| extrae caracteres|	substr()|
+|str_dup()| duplica caracteres|-|
+|str_trim()|	elimina los espacios en blanco iniciales y finales|	-|
+
+- Las herramientas más potentes del paquete son las que permiten la búsqueda de patrones en el texto y utilizan expresiones regulares.
+
+---
+# Expresiones regulares (regex)
+
+- Una expresión regular es una secuencia de caracteres que forma un patrón de búsqueda en una cadena de caracteres. Es un lenguaje conciso para encontrar patrones en un texto.
+
+- Por ejemplo, la expresión regular "[aeiou]":
+
+
+```r
+library(stringr)
+x &lt;- c("dplyr", "tidyr", "stringr", "broom")
+
+# extrae los elementos que matchean
+str_subset(x, "[aeiou]")
+```
+
+```
+[1] "tidyr"   "stringr" "broom"  
+```
+
+&lt;!-- - Los patrones de expresiones regulares pueden estar formados por una combinación de caracteres alfanuméricos y caracteres especiales o ser tan simple como un solo carácter. --&gt;
+
+---
+# str_*()
+
+| Función | Descripción |
+|---------|-------------|
+|str_detect() | devuelve si hay matchea con el patrón|
+|str_count()| cuenta las coincidencias con el patrón|
+|str_subset()| extrae elementos que matchean|
+|str_locate()| devuelve la posición del match|
+|str_extract()| extrae los caracteres coincidentes|
+|str_replace()| reemplaza el match con nuevo texto|
+
+---
+# str_detect()
+
+- Quiero quedarme con las observaciones de la atleta Dolores Moreira. 
+- Si sé cómo está escrito su nombre en la variable name puedo hacer directamente:
+
+
+```r
+dolores &lt;- juegos %&gt;% filter(name == "Dolores Moreira")
+```
+
+- Si no da resultados, busco un patrón usando str_detect()
+
+
+```r
+library(stringr)
+dolores &lt;- juegos %&gt;% 
+  filter(str_detect(name, pattern = "Dolores Moreira"))
+```
+
+---
+# Ejercicio
+
+- Instalar y cargar el paquete stringr si es necesario.
+
+- Seleccionar los casos cuyo evento contenga la palabra Marathon o Jump.
+
+- Seleccionar los casos que contengan números en la variable evento. Usar la expresión regular "[:digit:]".
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false,
+"ratio": "16:9",
+"slideNumberFormat": "<div class=\"progress-bar-container\">\n  <div class=\"progress-bar\" style=\"width: calc(%current% / %total% * 100%);\">\n  </div>\n</div>"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
