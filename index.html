@@ -4,31 +4,38 @@
     <title>Programación avanzada en R</title>
     <meta charset="utf-8" />
     <meta name="author" content="  Creative Commons Attribution 4.0 International License" />
-    <link href="taller_tidyverse_files/tile-view-0.2.6/tile-view.css" rel="stylesheet" />
-    <script src="taller_tidyverse_files/tile-view-0.2.6/tile-view.js"></script>
-    <link href="taller_tidyverse_files/animate.css-3.7.2/animate.xaringan.css" rel="stylesheet" />
-    <link href="taller_tidyverse_files/tachyons-4.12.0/tachyons.min.css" rel="stylesheet" />
-    <script src="taller_tidyverse_files/freezeframe-5.0.2/freezeframe.min.js"></script>
-    <script src="taller_tidyverse_files/xaringanExtra-freezeframe-0.0.1/freezeframe-init.js"></script>
+    <script src="index_files/header-attrs-2.14/header-attrs.js"></script>
+    <link href="index_files/tile-view-0.2.6/tile-view.css" rel="stylesheet" />
+    <script src="index_files/tile-view-0.2.6/tile-view.js"></script>
+    <link href="index_files/animate.css-3.7.2/animate.xaringan.css" rel="stylesheet" />
+    <link href="index_files/tachyons-4.12.0/tachyons.min.css" rel="stylesheet" />
+    <script src="index_files/freezeframe-5.0.2/freezeframe.min.js"></script>
+    <script src="index_files/xaringanExtra-freezeframe-0.0.1/freezeframe-init.js"></script>
     <script id="xaringanExtra-freezeframe-options" type="application/json">{"selector":"img[src$=\"gif\"]","trigger":"click","overlay":false,"responsive":true,"warnings":true}</script>
-    <script src="taller_tidyverse_files/clipboard-2.0.6/clipboard.min.js"></script>
-    <link href="taller_tidyverse_files/xaringanExtra-clipboard-0.2.6/xaringanExtra-clipboard.css" rel="stylesheet" />
-    <script src="taller_tidyverse_files/xaringanExtra-clipboard-0.2.6/xaringanExtra-clipboard.js"></script>
+    <script src="index_files/clipboard-2.0.6/clipboard.min.js"></script>
+    <link href="index_files/xaringanExtra-clipboard-0.2.6/xaringanExtra-clipboard.css" rel="stylesheet" />
+    <script src="index_files/xaringanExtra-clipboard-0.2.6/xaringanExtra-clipboard.js"></script>
     <script>window.xaringanExtraClipboard(null, {"button":"Copy Code","success":"Copied!","error":"Press Ctrl+C to Copy"})</script>
-    <script type="application/json" id="xaringanExtra-editable-docid">{"id":"x0b4b734debf4e06a1fbe8534c72c310","expires":1}</script>
-    <script src="taller_tidyverse_files/himalaya-1.1.0/himalaya.js"></script>
-    <script src="taller_tidyverse_files/js-cookie-3.0.0/js.cookie.js"></script>
-    <link href="taller_tidyverse_files/editable-0.2.6/editable.css" rel="stylesheet" />
-    <script src="taller_tidyverse_files/editable-0.2.6/editable.js"></script>
+    <script type="application/json" id="xaringanExtra-editable-docid">{"id":"c338f209f1c3498b9b3bd0f06b827ba8","expires":1}</script>
+    <script src="index_files/himalaya-1.1.0/himalaya.js"></script>
+    <script src="index_files/js-cookie-3.0.0/js.cookie.js"></script>
+    <link href="index_files/editable-0.2.6/editable.css" rel="stylesheet" />
+    <script src="index_files/editable-0.2.6/editable.js"></script>
     <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
   </head>
   <body>
     <textarea id="source">
 class: center, middle, inverse, title-slide
 
+.title[
 # Programación avanzada en R
-## Escuela de Invierno - Julio 2021 <br> Gabriela Mathieu
+]
+.subtitle[
+## Escuela de Invierno - Julio 2022 <br> Gabriela Mathieu
+]
+.author[
 ### <a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/88x31.png" /></a><br /> <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>
+]
 
 ---
 
@@ -55,7 +62,7 @@ class: center, middle, inverse, title-slide
 
 - Paquete [tidyr](https://github.com/rstudio/cheatsheets/blob/master/data-import.pdf)
 
-&lt;!-- - Paquete [stringr] --&gt;
+- Paquete [stringr](https://stringr.tidyverse.org/)
 
 &lt;!-- - Paquete [lubridate] --&gt;
 
@@ -77,7 +84,7 @@ class: inverse, center, middle
 - cada columna es una variable
 - cada celda es un único valor 
 
-&lt;img src="img/tidyverse/tidy_concept.png" width="853" /&gt;
+![](img/tidyverse/tidy_concept.png)&lt;!-- --&gt;
 
 Fuente: R for Data Science (Hadley Wickham &amp; Garrett Grolemund)
 
@@ -191,15 +198,16 @@ head(atletas)
 ```
 
 ```
-# A tibble: 6 x 15
-     ID Name           Sex     Age Height Weight Team      NOC   Games    City   Sport    Event              Gold Silver Bronze
-  &lt;dbl&gt; &lt;chr&gt;          &lt;chr&gt; &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt; &lt;chr&gt;     &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt;  &lt;chr&gt;    &lt;chr&gt;             &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;
-1     1 A Dijiang      M        24    180     80 China     CHN   1992 Su… Barce… Basketb… Basketball Men's…     0      0      0
-2     2 A Lamusi       M        23    170     60 China     CHN   2012 Su… London Judo     Judo Men's Extra…     0      0      0
-3     3 Gunnar Nielse… M        24     NA     NA Denmark   DEN   1920 Su… Antwe… Football Football Men's F…     0      0      0
-4     4 Edgar Lindena… M        34     NA     NA Denmark/… DEN   1900 Su… Paris  Tug-Of-… Tug-Of-War Men's…     1      0      0
-5     5 Christine Jac… F        21    185     82 Netherla… NED   1988 Wi… Calga… Speed S… Speed Skating Wo…     0      0      0
-6     5 Christine Jac… F        21    185     82 Netherla… NED   1988 Wi… Calga… Speed S… Speed Skating Wo…     0      0      0
+# A tibble: 6 × 15
+     ID Name       Sex     Age Height Weight Team  NOC   Games City  Sport Event
+  &lt;dbl&gt; &lt;chr&gt;      &lt;chr&gt; &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;
+1     1 A Dijiang  M        24    180     80 China CHN   1992… Barc… Bask… Bask…
+2     2 A Lamusi   M        23    170     60 China CHN   2012… Lond… Judo  Judo…
+3     3 Gunnar Ni… M        24     NA     NA Denm… DEN   1920… Antw… Foot… Foot…
+4     4 Edgar Lin… M        34     NA     NA Denm… DEN   1900… Paris Tug-… Tug-…
+5     5 Christine… F        21    185     82 Neth… NED   1988… Calg… Spee… Spee…
+6     5 Christine… F        21    185     82 Neth… NED   1988… Calg… Spee… Spee…
+# … with 3 more variables: Gold &lt;dbl&gt;, Silver &lt;dbl&gt;, Bronze &lt;dbl&gt;
 ```
 
 El objeto atleta tiene [varias clases asociadas](https://www.tidyverse.org/blog/2018/12/readr-1-3-1/): data.frame y tbl_df
@@ -564,7 +572,7 @@ atletas %&gt;% select(1:9) %&gt;% slice(1:2)
 ```
 
 ```
-# A tibble: 2 x 9
+# A tibble: 2 × 9
      id name      sex     age height weight team  noc   games      
   &lt;dbl&gt; &lt;chr&gt;     &lt;chr&gt; &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;      
 1     1 A Dijiang M        24    180     80 China CHN   1992 Summer
@@ -576,7 +584,7 @@ naciones %&gt;% slice(1:2)
 ```
 
 ```
-# A tibble: 2 x 3
+# A tibble: 2 × 3
   noc   region      notes               
   &lt;chr&gt; &lt;chr&gt;       &lt;chr&gt;               
 1 AFG   Afghanistan &lt;NA&gt;                
@@ -680,15 +688,17 @@ head(juegos)
 ```
 
 ```
-# A tibble: 6 x 19
-     id name    sex     age height weight team   noc   year  seasons city   sport event   gold silver bronze menor region notes
-  &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt; &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt; &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;   &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;  &lt;chr&gt;
-1     1 A Diji… M        24    180     80 China  CHN   1992  Summer  Barce… Bask… Baske…     0      0      0     0 China  &lt;NA&gt; 
-2     2 A Lamu… M        23    170     60 China  CHN   2012  Summer  London Judo  Judo …     0      0      0     0 China  &lt;NA&gt; 
-3     3 Gunnar… M        24     NA     NA Denma… DEN   1920  Summer  Antwe… Foot… Footb…     0      0      0     0 Denma… &lt;NA&gt; 
-4     4 Edgar … M        34     NA     NA Denma… DEN   1900  Summer  Paris  Tug-… Tug-O…     1      0      0     0 Denma… &lt;NA&gt; 
-5     5 Christ… F        21    185     82 Nethe… NED   1988  Winter  Calga… Spee… Speed…     0      0      0     0 Nethe… &lt;NA&gt; 
-6     5 Christ… F        21    185     82 Nethe… NED   1988  Winter  Calga… Spee… Speed…     0      0      0     0 Nethe… &lt;NA&gt; 
+# A tibble: 6 × 19
+     id name     sex     age height weight team  noc   year  seasons city  sport
+  &lt;dbl&gt; &lt;chr&gt;    &lt;chr&gt; &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;   &lt;chr&gt; &lt;chr&gt;
+1     1 A Dijia… M        24    180     80 China CHN   1992  Summer  Barc… Bask…
+2     2 A Lamusi M        23    170     60 China CHN   2012  Summer  Lond… Judo 
+3     3 Gunnar … M        24     NA     NA Denm… DEN   1920  Summer  Antw… Foot…
+4     4 Edgar L… M        34     NA     NA Denm… DEN   1900  Summer  Paris Tug-…
+5     5 Christi… F        21    185     82 Neth… NED   1988  Winter  Calg… Spee…
+6     5 Christi… F        21    185     82 Neth… NED   1988  Winter  Calg… Spee…
+# … with 7 more variables: event &lt;chr&gt;, gold &lt;dbl&gt;, silver &lt;dbl&gt;, bronze &lt;dbl&gt;,
+#   menor &lt;dbl&gt;, region &lt;chr&gt;, notes &lt;chr&gt;
 ```
 
 &lt;!-- --- --&gt;
@@ -710,20 +720,22 @@ class: inverse, center, middle
 
 
 ```
-# A tibble: 361 x 23
-   Name  `1924` `1928` `1932` `1936` `1948` `1952` `1956` `1960` `1964` `1968` `1972` `1976` `1984` `1988` `1992` `1996` `1998`
-   &lt;chr&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;
- 1 Jos …      1     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA
- 2 Pedr…      1     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA
- 3 Hcto…      1     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA
- 4 Jos …      1     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA
- 5 Libe…      1     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA
- 6 Manu…      1     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA
- 7 L. A…      1     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA
- 8 Sant…      1     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA
- 9 Alfr…      1     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA
-10 Mari…      1     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA
-# … with 351 more rows, and 5 more variables: 2000 &lt;dbl&gt;, 2004 &lt;dbl&gt;, 2008 &lt;dbl&gt;, 2012 &lt;dbl&gt;, 2016 &lt;dbl&gt;
+# A tibble: 361 × 23
+   Name    `1924` `1928` `1932` `1936` `1948` `1952` `1956` `1960` `1964` `1968`
+   &lt;chr&gt;    &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;
+ 1 Jos Le…      1     NA     NA     NA     NA     NA     NA     NA     NA     NA
+ 2 Pedro …      1     NA     NA     NA     NA     NA     NA     NA     NA     NA
+ 3 Hctor …      1     NA     NA     NA     NA     NA     NA     NA     NA     NA
+ 4 Jos Pe…      1     NA     NA     NA     NA     NA     NA     NA     NA     NA
+ 5 Libert…      1     NA     NA     NA     NA     NA     NA     NA     NA     NA
+ 6 Manuel…      1     NA     NA     NA     NA     NA     NA     NA     NA     NA
+ 7 L. A. …      1     NA     NA     NA     NA     NA     NA     NA     NA     NA
+ 8 Santos…      1     NA     NA     NA     NA     NA     NA     NA     NA     NA
+ 9 Alfred…      1     NA     NA     NA     NA     NA     NA     NA     NA     NA
+10 Mario …      1     NA     NA     NA     NA     NA     NA     NA     NA     NA
+# … with 351 more rows, and 12 more variables: `1972` &lt;dbl&gt;, `1976` &lt;dbl&gt;,
+#   `1984` &lt;dbl&gt;, `1988` &lt;dbl&gt;, `1992` &lt;dbl&gt;, `1996` &lt;dbl&gt;, `1998` &lt;dbl&gt;,
+#   `2000` &lt;dbl&gt;, `2004` &lt;dbl&gt;, `2008` &lt;dbl&gt;, `2012` &lt;dbl&gt;, `2016` &lt;dbl&gt;
 ```
 
 
@@ -941,6 +953,19 @@ if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
     deleted = true;
   });
 })();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
 (function() {
   "use strict"
   // Replace <script> tags in slides area to make them executable
